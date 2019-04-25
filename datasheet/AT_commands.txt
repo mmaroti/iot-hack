@@ -1,0 +1,23 @@
+IoT meetup Szeged (2019.04.03) AT parancsok:
+
+UART low-power mód kikapcsolása:
+AT+SM=LOCK
+
+Sleep kikapcsolása:
+AT+QSCLK=0
+
+Elõzetesen rögzített PDN konfiguráció aktiválása:
+AT+QGACT=1,1,"u.iot.mt.gr.hu"
+
+UDP Socket konfigurációja (iotforum.kibu.hu paramétereire):
+AT+QSOC=1,2,1
+AT+QSOCON=0,41234,"188.166.124.211"
+
+Üzenet küldése:
+AT+QSOSEND=0,23,496f54206d656574757020537a65676564203230313921
+
+Fogadott üzenet olvasása:
+AT+QSORF=0,23
+
+
+Hasznos link: https://codebeautify.org/string-hex-converter
