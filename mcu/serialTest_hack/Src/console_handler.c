@@ -16,12 +16,16 @@ int is_rx_ready() {
 enum {
 	CONSOLE_LEN = 100,
 };
-uint8_t console[CONSOLE_LEN];
+char console[CONSOLE_LEN];
 int console_pos = 0;
 
 void process_console() {
-	if (memcmp(&console, "toggle", 6) == 0) {
+	if (strcmp(console, "toggle") == 0) {
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	} else {
+		write_console("Unknown: ");
+		write_console(console);
+		write_console("\n");
 	}
 }
 
@@ -31,10 +35,19 @@ void handle_console() {
 		uint8_t data;
 		HAL_UART_Receive(&huart2, &data, 1, 1);
 		if (data == '\n' || data == '\r') {
-			process_console();
-			console_pos = 0;
-		} else if (console_pos < CONSOLE_LEN) {
-			console[console_pos++] = data;
+			data = 0;
 		}
+		if (console_pos < CONSOLE_LEN) {
+			console[console_pos++] = data;
+			if (data == 0)
+				process_console();
+		}
+		if (data == 0)
+			console_pos = 0;
 	}
+}
+
+void write_console(const char *text) {
+	int len = strlen(text);
+	HAL_UART_Transmit(&huart2, (uint8_t*) text, len, 10);
 }
