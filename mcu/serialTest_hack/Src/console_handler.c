@@ -5,10 +5,11 @@
  *      Author: gyooo
  */
 
-#include <console_handler.h>
+#include "console_handler.h"
 #include "usart.h"
-#include <string.h>
 #include "radio_handler.h"
+#include <string.h>
+#include <stdlib.h>
 
 int is_rx_ready() {
 	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) ? SET : RESET) == SET;
@@ -21,13 +22,10 @@ char console[CONSOLE_LEN];
 int console_pos = 0;
 
 void process_console() {
-	if(console[0]=='\n' || console[0]=='\r') {
-		return;
-	}
 	if (strcmp(console, "toggle") == 0) {
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	} else if(memcmp(console, "AT", 2) == 0 && console_pos<CONSOLE_LEN-3) {
-		console[console_pos-1] = '\r';
+	} else if (memcmp(console, "AT", 2) == 0 && console_pos < CONSOLE_LEN - 3) {
+		console[console_pos - 1] = '\r';
 		console[console_pos++] = '\n';
 		console[console_pos++] = 0;
 		send_radio(console);
@@ -48,7 +46,7 @@ void handle_console() {
 		}
 		if (console_pos < CONSOLE_LEN) {
 			console[console_pos++] = data;
-			if (data == 0)
+			if (data == 0 && console_pos > 1)
 				process_console();
 		}
 		if (data == 0)
@@ -59,4 +57,10 @@ void handle_console() {
 void write_console(const char *text) {
 	int len = strlen(text);
 	HAL_UART_Transmit(&huart2, (uint8_t*) text, len, 10);
+}
+
+void write_console_int(int value) {
+	char buffer[20];
+	itoa(value, buffer, 10);
+	write_console(buffer);
 }

@@ -14,7 +14,7 @@ uint8_t accel_ready;
 
 enum {
 	ACCEL_BATCH = 25, // water mark for hardware fifo
-	ACCEL_LEN = 300, // must be divisible by 3*25
+	ACCEL_LEN = 3 * 25, // must be divisible by 3*25
 };
 
 int16_t accel[ACCEL_LEN];
@@ -35,7 +35,12 @@ void handle_accel() {
 		}
 
 		if (accel_pos >= ACCEL_LEN) {
-			write_console("accel read\n");
+			write_console("accel:");
+			for (int n = 0; n < accel_pos; n++) {
+				write_console(" ");
+				write_console_int(accel[n]);
+			}
+			write_console("\n");
 			accel_pos = 0;
 		}
 	}
