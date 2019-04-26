@@ -14,7 +14,8 @@ uint8_t accel_ready;
 
 enum {
 	ACCEL_BATCH = 25, // water mark for hardware fifo
-	ACCEL_LEN = 4 * 3 * 25, // must be divisible by 3*25
+	ACCEL_LEN = 3 * 25, // must be divisible by 3*25
+	DETECTOR_THRESHOLD = 200, //find jumps > threshold
 };
 
 int16_t accel[ACCEL_LEN];
@@ -35,12 +36,15 @@ void handle_accel() {
 		}
 
 		if (accel_pos >= ACCEL_LEN) {
-			// write_console("accel:");
-			// for (int n = 0; n < accel_pos; n++) {
+			//write_console("accel:");
+			//for (int n = 0; n < accel_pos; n++) {
 			//	write_console(" ");
 			//	write_console_int(accel[n]);
 			//}
-			// write_console("\n");
+			//write_console("\n");
+			if(detect_accident(accel)) {
+				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
+			}
 			accel_pos = 0;
 		}
 	}
@@ -93,4 +97,21 @@ void accel_stop() {
 	ADXL345_SetRegisterValue(ADXL345_FIFO_CTL, 0x00); //clears FIFO, bypass mode
 	ADXL345_SetRegisterValue(ADXL345_FIFO_CTL, 0x59); //01- FIFO mode, 0 - trigger bit, 11001 - 25 samples (2 seconds) = 0101 1001 -> 0x59
 	ADXL345_SetRegisterValue(ADXL345_INT_ENABLE, ADXL345_WATERMARK); //enable Watermark
+}
+
+
+uint8_t detect_accident(int16_t *data) {
+	int i;
+	int dx,dy,dz;
+	for(i=1;i<ACCEL_BATCH;i++) {
+		dx = accel[i*3]-accel[(i-1)*3];
+		dy = accel[1+i*3]-accel[1+(i-1)*3];
+		dz = accel[2+i*3]-accel[2+(i-1)*3];
+
+		if(abs(dx)>DETECTOR_THRESHOLD || abs(dy)>DETECTOR_THRESHOLD || abs(dz)>DETECTOR_THRESHOLD) {
+			return 1u;
+		} else {
+			return 0u;
+		}
+	}
 }
