@@ -1,7 +1,7 @@
 /*
  * radio_handler.h
  *
- *  Created on: 2019. ápr. 26.
+ *  Created on: 2019. ï¿½pr. 26.
  *      Author: gyooo
  */
 
@@ -9,6 +9,6 @@
 #define RADIO_HANDLER_H_
 
 void handle_radio();
-void send_radio(char *data);
+void send_radio(const char *data);
 
 #endif /* RADIO_HANDLER_H_ */

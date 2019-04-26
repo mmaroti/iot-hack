@@ -11,65 +11,83 @@
 #include <string.h>
 #include <stdlib.h>
 
-int is_rx_ready() {
+int is_console_rx_ready() {
 	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) ? SET : RESET) == SET;
 }
 
-int is_tx_ready() {
+int is_console_tx_ready() {
 	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TXE) ? SET : RESET) == SET;
 }
 
 enum {
-	CONSOLE_LEN = 100, // input command buffer
-	REPORT_LEN = 2000, // output report buffer
+	CONSOLE_LEN = 128, // input command buffer
+	REPORT_LEN = 1024, // output report buffer
 };
 char console[CONSOLE_LEN];
 int console_pos = 0;
+int booted = 0;
 
 char report[REPORT_LEN];
-int report_head = 0;
-int report_tail = 0;
-
-void process_console() {
-	if (strcmp(console, "toggle") == 0) {
-		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	} else if (memcmp(console, "AT", 2) == 0 && console_pos < CONSOLE_LEN - 3) {
-		console[console_pos - 1] = '\r';
-		console[console_pos++] = '\n';
-		console[console_pos++] = 0;
-		send_radio(console);
-	} else {
-		write_console("Unknown: ");
-		write_console(console);
-		write_console("\n");
-	}
-}
+int report_pos = 0;
+int report_len = 0;
 
 void handle_console() {
-	//usart2
-	if (is_rx_ready()) {
+	if (!booted) {
+		booted = 1;
+		write_console("booted\n");
+	}
+	if (is_console_rx_ready()) {
 		uint8_t data;
-		HAL_UART_Receive(&huart2, &data, 1, 1);
-		if (data == '\n' || data == '\r') {
-			data = 0;
+		if (HAL_UART_Receive(&huart2, &data, 1, 1) == HAL_OK) {
+			if (data == '\n' || data == '\r') {
+				data = 0;
+			}
+			if (console_pos < CONSOLE_LEN) {
+				console[console_pos++] = data;
+				if (data == 0 && console_pos > 1)
+					process_command(console);
+			}
+			if (data == 0)
+				console_pos = 0;
 		}
-		if (console_pos < CONSOLE_LEN) {
-			console[console_pos++] = data;
-			if (data == 0 && console_pos > 1)
-				process_console();
-		}
-		if (data == 0)
-			console_pos = 0;
+	}
+	if (report_len > 0 && is_console_tx_ready()) {
+		HAL_UART_Transmit(&huart2, (uint8_t*) report + report_pos, 1, 1);
+		report_pos += 1;
+		if (report_pos >= REPORT_LEN)
+			report_pos = 0;
+		report_len -= 1;
 	}
 }
 
 void write_console(const char *text) {
-	int len = strlen(text);
-	HAL_UART_Transmit(&huart2, (uint8_t*) text, len, 10);
+	while (*text != 0 && report_len < REPORT_LEN) {
+		int pos = report_pos + report_len;
+		if (pos >= REPORT_LEN)
+			pos -= REPORT_LEN;
+		report[pos] = *(text++);
+		report_len += 1;
+	}
 }
 
 void write_console_int(int value) {
 	char buffer[20];
 	itoa(value, buffer, 10);
 	write_console(buffer);
+}
+
+void process_command(const char *text) {
+	if (strcmp(text, "toggle") == 0) {
+		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	} else if (strncmp(text, "AT", 2) == 0) {
+		write_console("at cmd: ");
+		write_console(text);
+		write_console("\n");
+		send_radio(text);
+		send_radio("\r");
+	} else {
+		write_console("unknown: ");
+		write_console(text);
+		write_console("\n");
+	}
 }

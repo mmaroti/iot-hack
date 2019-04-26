@@ -101,9 +101,9 @@ int main(void)
   MX_USART1_UART_Init();
   MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
-  accel_init();
-  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-  accel_start();
+  //accel_init();
+  //HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+  //accel_start();
   /* USER CODE END 2 */
 
   /* Infinite loop */

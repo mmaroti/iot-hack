@@ -1,7 +1,7 @@
 /*
  * radio_handler.c
  *
- *  Created on: 2019. ápr. 26.
+ *  Created on: 2019. ï¿½pr. 26.
  *      Author: gyooo
  */
 
@@ -15,44 +15,45 @@ int is_radio_rx_ready() {
 }
 
 enum {
-	RADIO_LEN = 100,
+	RADIO_LEN = 128,
 };
-uint8_t radio[RADIO_LEN];
+char radio[RADIO_LEN];
 int radio_pos = 0;
 
-void process_radio() {
-	if(radio[0]=='\n' || radio[0]=='\r') {
-		return;
+void process_report() {
+	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+
+	if (0) {
+		for (int i = 0; i < radio_pos; i++) {
+			if (radio[i] < 32 || radio[i] > 127)
+				radio[i] = '?';
+		}
 	}
-	if (memcmp(&radio, "OK", 6) == 0) {
-		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	}
-	if(radio_pos<RADIO_LEN-3) {
-		radio[radio_pos-1] = '\r';
-		radio[radio_pos++] = '\n';
-		radio[radio_pos++] = 0;
-		write_console(radio);
-	}
+
+	write_console("radio: ");
+	radio[radio_pos] = 0;
+	write_console(radio);
+	write_console("\n");
 }
 
 void handle_radio() {
-	//usart2
 	if (is_radio_rx_ready()) {
 		uint8_t data;
-		HAL_UART_Receive(&huart1, &data, 1, 1);
-		if (data == '\n' || data == '\r') {
-			data = 0;
-		}
-		if (radio_pos < RADIO_LEN) {
-			radio[radio_pos++] = data;
+		if (HAL_UART_Receive(&huart1, &data, 1, 1) == HAL_OK) {
+			if (data == '\n' || data == '\r') {
+				data = 0;
+			}
+			if (radio_pos < RADIO_LEN) {
+				radio[radio_pos++] = data;
+				if (data == 0 && radio_pos > 1)
+					process_report(radio);
+			}
 			if (data == 0)
-				process_radio();
+				radio_pos = 0;
 		}
-		if (data == 0)
-			radio_pos = 0;
 	}
 }
 
-void send_radio(char *data) {
-	HAL_UART_Transmit(&huart1, data, strlen(data), 10);
+void send_radio(const char *data) {
+	HAL_UART_Transmit(&huart1, (uint8_t*) data, strlen(data), 10);
 }
