@@ -23,6 +23,6 @@ void accel_start();
 void accel_stop();
 
 // Called from the main loop
-void accel_handler();
+void handle_accel();
 
 #endif /* ACCEL_CONTROL_H */

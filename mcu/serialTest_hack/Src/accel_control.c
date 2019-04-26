@@ -20,7 +20,7 @@ enum {
 int16_t accel[ACCEL_LEN];
 uint32_t accel_pos;
 
-void accel_handler() {
+void handle_accel() {
 	uint8_t ready;
 	__disable_irq();
 	ready = accel_ready;

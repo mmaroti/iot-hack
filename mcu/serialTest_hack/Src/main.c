@@ -44,6 +44,9 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
+#include "console_handler.h"
+#include "radio_handler.h"
+#include "accel_control.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -98,7 +101,9 @@ int main(void)
   MX_USART1_UART_Init();
   MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
-
+  accel_init();
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+  accel_start();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -109,9 +114,9 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-
 	  handle_console();
 	  handle_radio();
+	  handle_accel();
   }
   /* USER CODE END 3 */
 
