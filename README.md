@@ -14,3 +14,4 @@ IDEAS:
 
 SERVER:
 - ubuntu@snapshot.onl, ip: 52.4.126.47, port: 1973
+- testing: `nc -4u 52.4.126.47 1973`
