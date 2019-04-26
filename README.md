@@ -13,4 +13,4 @@ IDEAS:
 - Decide who is driving, detect different cars/driving styles, etc.
 
 SERVER:
-- ubuntu@snapshot.onl, ip: 52.4.126.47, port: 1234
+- ubuntu@snapshot.onl, ip: 52.4.126.47, port: 1973
