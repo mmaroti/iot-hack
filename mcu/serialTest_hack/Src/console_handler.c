@@ -5,12 +5,12 @@
  *      Author: gyooo
  */
 
-#include "uart_handler.h"
+#include <console_handler.h>
 #include "usart.h"
 #include <string.h>
 
-int isRxReady(UART_HandleTypeDef *huart) {
-	return (__HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE) ? SET : RESET) == SET;
+int is_rx_ready() {
+	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) ? SET : RESET) == SET;
 }
 
 enum {
@@ -19,26 +19,22 @@ enum {
 uint8_t console[CONSOLE_LEN];
 int console_pos = 0;
 
-void processConsole() {
-	if (memcmp(console, "toggle", 6) == 0) {
+void process_console() {
+	if (memcmp(&console, "toggle", 6) == 0) {
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	}
 }
 
-void handleConsole() {
+void handle_console() {
 	//usart2
-	if (isRxReady(&huart2)) {
+	if (is_rx_ready()) {
 		uint8_t data;
 		HAL_UART_Receive(&huart2, &data, 1, 1);
-		if (data == '\n') {
-			processConsole();
+		if (data == '\n' || data == '\r') {
+			process_console();
 			console_pos = 0;
 		} else if (console_pos < CONSOLE_LEN) {
 			console[console_pos++] = data;
 		}
 	}
-}
-
-void handleRadio() {
-	//usart1
 }

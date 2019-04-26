@@ -37,13 +37,13 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include "console_handler.h""
 #include "main.h"
 #include "stm32l4xx_hal.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-#include "uart_handler.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -108,7 +108,7 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-	  handleConsole();
+	  handle_console();
   }
   /* USER CODE END 3 */
 
