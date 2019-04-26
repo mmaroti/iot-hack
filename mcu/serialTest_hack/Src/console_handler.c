@@ -8,6 +8,7 @@
 #include <console_handler.h>
 #include "usart.h"
 #include <string.h>
+#include "radio_handler.h"
 
 int is_rx_ready() {
 	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) ? SET : RESET) == SET;
@@ -22,11 +23,17 @@ int console_pos = 0;
 void process_console() {
 	if (strcmp(console, "toggle") == 0) {
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	} else if(memcmp(console, "AT ", 3) == 0 && console_pos<CONSOLE_LEN-3) {
+		console[console_pos-1] = '\r';
+		console[console_pos] = '\n';
+		console[console_pos++] = 0;
+		send_radio(console+3);
 	} else {
 		write_console("Unknown: ");
 		write_console(console);
 		write_console("\n");
 	}
+
 }
 
 void handle_console() {
