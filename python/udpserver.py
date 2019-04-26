@@ -22,10 +22,14 @@ class Server(object):
         return self
 
     def recv(self):
+        """Returns (data, addr) pair"""
         try:
             return self.sock.recvfrom(1024)
         except socket.timeout:
-            return None
+            return (None, None)
+
+    def send(self, data, addr):
+        self.sock.sendto(data, addr)
 
     def __exit__(self, err_typ, err_val, trace):
         assert self.sock is not None
@@ -39,7 +43,11 @@ def run(args=None):
 
     with Server() as server:
         while True:
-            print(server.recv())
+            (data, addr) = server.recv()
+            if data is not None:
+                logging.info("Received %s from %s",
+                             data.replace("\n", "<cr>"), addr)
+                server.send("Hello", addr)
 
 
 if __name__ == '__main__':
