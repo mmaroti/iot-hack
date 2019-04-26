@@ -43,15 +43,14 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "uart_handler.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-char data[100] = "AT\n\r";
-char recv[100];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -98,11 +97,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Transmit(&huart1, data, 4, 10);
-  HAL_UART_Receive(&huart1, recv, 4, 10);
-  if(recv[0] == 'O' && recv[1] == 'K') {
-	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
-  }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -113,7 +108,7 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-
+	  handleConsole();
   }
   /* USER CODE END 3 */
 

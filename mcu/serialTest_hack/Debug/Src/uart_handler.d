@@ -1,5 +1,6 @@
-Src/main.o: ../Src/main.c \
- C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/main.h \
+Src/uart_handler.o: ../Src/uart_handler.c \
+ C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/uart_handler.h \
+ C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/usart.h \
  C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h \
  C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/stm32l4xx_hal_conf.h \
  C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/main.h \
@@ -29,12 +30,11 @@ Src/main.o: ../Src/main.c \
  C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr.h \
  C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr_ex.h \
  C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
- C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
- C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/usart.h \
- C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/gpio.h \
- C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/uart_handler.h
+ C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h
 
-C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/main.h:
+C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/uart_handler.h:
+
+C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/usart.h:
 
 C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
 
@@ -95,9 +95,3 @@ C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Drivers/STM32L4xx_H
 C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:
 
 C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h:
-
-C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/usart.h:
-
-C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/gpio.h:
-
-C:/Users/gyooo/OneDrive/vandyBackup/shooting/serialTest_hack/Inc/uart_handler.h:

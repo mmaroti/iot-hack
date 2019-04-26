@@ -9,6 +9,7 @@ C_SRCS += \
 ../Src/stm32l4xx_hal_msp.c \
 ../Src/stm32l4xx_it.c \
 ../Src/system_stm32l4xx.c \
+../Src/uart_handler.c \
 ../Src/usart.c 
 
 OBJS += \
@@ -17,6 +18,7 @@ OBJS += \
 ./Src/stm32l4xx_hal_msp.o \
 ./Src/stm32l4xx_it.o \
 ./Src/system_stm32l4xx.o \
+./Src/uart_handler.o \
 ./Src/usart.o 
 
 C_DEPS += \
@@ -25,6 +27,7 @@ C_DEPS += \
 ./Src/stm32l4xx_hal_msp.d \
 ./Src/stm32l4xx_it.d \
 ./Src/system_stm32l4xx.d \
+./Src/uart_handler.d \
 ./Src/usart.d 
 
 
