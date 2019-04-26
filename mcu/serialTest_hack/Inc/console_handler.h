@@ -10,5 +10,6 @@
 
 void handle_console();
 void write_console(const char* text);
+void write_console_int(int value);
 
 #endif /* CONSOLE_HANDLER_H_ */
