@@ -36,10 +36,10 @@ void handle_accel() {
 
 		if (accel_pos >= ACCEL_LEN) {
 			write_console("accel:");
-			for (int n = 0; n < accel_pos; n++) {
-				write_console(" ");
-				write_console_int(accel[n]);
-			}
+			// for (int n = 0; n < accel_pos; n++) {
+			//	write_console(" ");
+			//	write_console_int(accel[n]);
+			//}
 			write_console("\n");
 			accel_pos = 0;
 		}

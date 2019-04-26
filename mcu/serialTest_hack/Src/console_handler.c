@@ -15,11 +15,20 @@ int is_rx_ready() {
 	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) ? SET : RESET) == SET;
 }
 
+int is_tx_ready() {
+	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TXE) ? SET : RESET) == SET;
+}
+
 enum {
-	CONSOLE_LEN = 100,
+	CONSOLE_LEN = 100, // input command buffer
+	REPORT_LEN = 2000, // output report buffer
 };
 char console[CONSOLE_LEN];
 int console_pos = 0;
+
+char report[REPORT_LEN];
+int report_head = 0;
+int report_tail = 0;
 
 void process_console() {
 	if (strcmp(console, "toggle") == 0) {
