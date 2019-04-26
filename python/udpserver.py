@@ -8,7 +8,7 @@ import time
 
 
 class Server(object):
-    def __init__(self, addr="127.0.0.1", port=1234):
+    def __init__(self, addr="0.0.0.0", port=1973):
         self.addr = addr
         self.port = port
         self.sock = None
