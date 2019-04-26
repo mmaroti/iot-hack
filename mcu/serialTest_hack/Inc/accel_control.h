@@ -25,4 +25,7 @@ void accel_stop();
 // Called from the main loop
 void handle_accel();
 
+//detect accident
+uint8_t detect_accident(int16_t *data);
+
 #endif /* ACCEL_CONTROL_H */
