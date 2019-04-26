@@ -38,7 +38,8 @@ def run(args=None):
     logging.basicConfig(level=logging.INFO)
 
     with Server() as server:
-        print(server.recv())
+        while True:
+            print(server.recv())
 
 
 if __name__ == '__main__':
