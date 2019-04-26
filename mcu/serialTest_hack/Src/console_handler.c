@@ -21,19 +21,21 @@ char console[CONSOLE_LEN];
 int console_pos = 0;
 
 void process_console() {
+	if(console[0]=='\n' || console[0]=='\r') {
+		return;
+	}
 	if (strcmp(console, "toggle") == 0) {
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	} else if(memcmp(console, "AT ", 3) == 0 && console_pos<CONSOLE_LEN-3) {
+	} else if(memcmp(console, "AT", 2) == 0 && console_pos<CONSOLE_LEN-3) {
 		console[console_pos-1] = '\r';
-		console[console_pos] = '\n';
+		console[console_pos++] = '\n';
 		console[console_pos++] = 0;
-		send_radio(console+3);
+		send_radio(console);
 	} else {
 		write_console("Unknown: ");
 		write_console(console);
 		write_console("\n");
 	}
-
 }
 
 void handle_console() {

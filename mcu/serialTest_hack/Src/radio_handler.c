@@ -21,6 +21,9 @@ uint8_t radio[RADIO_LEN];
 int radio_pos = 0;
 
 void process_radio() {
+	if(radio[0]=='\n' || radio[0]=='\r') {
+		return;
+	}
 	if (memcmp(&radio, "OK", 6) == 0) {
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	}
