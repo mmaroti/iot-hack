@@ -50,8 +50,9 @@ def run(args=None):
                 logging.info("Received %s from %s",
                              data.replace("\n", "<cr>"), addr)
                 if data.startswith("gps"):
-                    location = geolocator.reverse("46.249937, 20.146077")
-                    print(location.address)
+                    # location = geolocator.reverse("46.249937, 20.146077")
+                    # print(location.address)
+                    print("SZTE, 13, Dugonics tér, Belváros, Szeged, Szegedi járás, Csongrád megye, Dél-Alföld, Alföld és Észak, 6720, Magyarország")
                 server.send("Hello", addr)
 
 
