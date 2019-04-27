@@ -103,8 +103,8 @@ int main(void)
   MX_RTC_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  //accel_init();
-  //HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+  accel_init();
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
   //accel_start();
   /* USER CODE END 2 */
 
@@ -121,7 +121,6 @@ int main(void)
 	  handle_accel();
   }
   /* USER CODE END 3 */
-
 }
 
 /**
