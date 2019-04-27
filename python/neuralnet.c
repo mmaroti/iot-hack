@@ -4,165 +4,212 @@
 #include <stdlib.h>
 #include <time.h>
 
-float x0, x1, x2, x3, x4; // inputs samples
-float d0, d1, d2, d3;     // 2 input + 2 output compressed
-float ls;                 // output loss
-float w[23];              // input weights
-float wd[23];             // output weights deriv
-float z0, z1, z2;         // output samples
+float x0, x1, x2, x3, x4, x5, x6, x7; // inputs samples
+float d0, d1, d2, d3;                 // output compressed
+float ls;                             // output loss
+float w[23];                          // input weights
+float wd[23];                         // output weights deriv
+float y3, y4, y5;                     // output samples
 
 void step() {
   float tmp0 = -1.0f;
-  float tmp1 = x0;
+  float tmp1 = x3;
   float tmp2 = tmp0 * tmp1;
   float tmp3 = w[22];
-  float tmp4 = d0;
-  float tmp5 = w[13];
-  float tmp6 = tmp4 * tmp5;
-  float tmp7 = tmp3 + tmp6;
-  float tmp8 = w[10];
-  float tmp9 = w[0];
-  float tmp10 = tmp1 * tmp9;
-  float tmp11 = tmp8 + tmp10;
-  float tmp12 = x1;
-  float tmp13 = w[1];
-  float tmp14 = tmp12 * tmp13;
-  float tmp15 = tmp11 + tmp14;
-  float tmp16 = x2;
-  float tmp17 = w[2];
-  float tmp18 = tmp16 * tmp17;
-  float tmp19 = tmp15 + tmp18;
-  float tmp20 = x3;
-  float tmp21 = w[3];
+  float tmp4 = w[10];
+  float tmp5 = x0;
+  float tmp6 = w[0];
+  float tmp7 = tmp5 * tmp6;
+  float tmp8 = tmp4 + tmp7;
+  float tmp9 = x1;
+  float tmp10 = w[1];
+  float tmp11 = tmp9 * tmp10;
+  float tmp12 = tmp8 + tmp11;
+  float tmp13 = x2;
+  float tmp14 = w[2];
+  float tmp15 = tmp13 * tmp14;
+  float tmp16 = tmp12 + tmp15;
+  float tmp17 = w[3];
+  float tmp18 = tmp1 * tmp17;
+  float tmp19 = tmp16 + tmp18;
+  float tmp20 = x4;
+  float tmp21 = w[4];
   float tmp22 = tmp20 * tmp21;
   float tmp23 = tmp19 + tmp22;
-  float tmp24 = x4;
-  float tmp25 = w[4];
-  float tmp26 = tmp24 * tmp25;
-  float tmp27 = tmp23 + tmp26;
-  float tmp28 = w[16];
-  float tmp29 = tmp27 * tmp28;
-  float tmp30 = tmp7 + tmp29;
-  float tmp31 = d1;
-  float tmp32 = w[18];
-  float tmp33 = tmp31 * tmp32;
-  float tmp34 = tmp30 + tmp33;
-  float tmp35 = w[11];
-  float tmp36 = w[5];
-  float tmp37 = tmp1 * tmp36;
-  float tmp38 = tmp35 + tmp37;
-  float tmp39 = w[6];
-  float tmp40 = tmp12 * tmp39;
-  float tmp41 = tmp38 + tmp40;
-  float tmp42 = w[7];
-  float tmp43 = tmp16 * tmp42;
-  float tmp44 = tmp41 + tmp43;
-  float tmp45 = w[8];
-  float tmp46 = tmp20 * tmp45;
-  float tmp47 = tmp44 + tmp46;
-  float tmp48 = w[9];
-  float tmp49 = tmp24 * tmp48;
-  float tmp50 = tmp47 + tmp49;
-  float tmp51 = w[21];
-  float tmp52 = tmp50 * tmp51;
-  float tmp53 = tmp34 + tmp52;
-  float tmp54 = tmp2 + tmp53;
-  float tmp55 = tmp54 * tmp54;
-  float tmp56 = -1.0f;
-  float tmp57 = tmp56 * tmp12;
-  float tmp58 = w[12];
-  float tmp59 = tmp4 * tmp58;
-  float tmp60 = tmp3 + tmp59;
-  float tmp61 = w[15];
-  float tmp62 = tmp27 * tmp61;
-  float tmp63 = tmp60 + tmp62;
-  float tmp64 = w[17];
-  float tmp65 = tmp31 * tmp64;
-  float tmp66 = tmp63 + tmp65;
-  float tmp67 = w[20];
-  float tmp68 = tmp50 * tmp67;
-  float tmp69 = tmp66 + tmp68;
-  float tmp70 = tmp57 + tmp69;
-  float tmp71 = tmp70 * tmp70;
-  float tmp72 = tmp55 + tmp71;
-  float tmp73 = -1.0f;
-  float tmp74 = tmp73 * tmp16;
-  float tmp75 = w[14];
-  float tmp76 = tmp27 * tmp75;
-  float tmp77 = tmp3 + tmp76;
-  float tmp78 = w[19];
-  float tmp79 = tmp50 * tmp78;
-  float tmp80 = tmp77 + tmp79;
-  float tmp81 = tmp74 + tmp80;
-  float tmp82 = tmp81 * tmp81;
-  float tmp83 = tmp72 + tmp82;
-  float tmp84 = 2.0f;
-  float tmp85 = tmp3 + tmp76;
-  float tmp86 = tmp85 + tmp79;
-  float tmp87 = tmp74 + tmp86;
-  float tmp88 = tmp84 * tmp87;
-  float tmp89 = tmp75 * tmp88;
-  float tmp90 = 2.0f;
-  float tmp91 = tmp60 + tmp62;
-  float tmp92 = tmp91 + tmp65;
-  float tmp93 = tmp92 + tmp68;
-  float tmp94 = tmp57 + tmp93;
-  float tmp95 = tmp90 * tmp94;
-  float tmp96 = tmp61 * tmp95;
-  float tmp97 = tmp89 + tmp96;
-  float tmp98 = 2.0f;
-  float tmp99 = tmp3 + tmp6;
-  float tmp100 = tmp99 + tmp29;
-  float tmp101 = tmp100 + tmp33;
-  float tmp102 = tmp101 + tmp52;
-  float tmp103 = tmp2 + tmp102;
-  float tmp104 = tmp98 * tmp103;
-  float tmp105 = tmp28 * tmp104;
-  float tmp106 = tmp97 + tmp105;
-  float tmp107 = tmp1 * tmp106;
-  float tmp108 = tmp12 * tmp106;
-  float tmp109 = tmp16 * tmp106;
-  float tmp110 = tmp20 * tmp106;
-  float tmp111 = tmp24 * tmp106;
-  float tmp112 = tmp78 * tmp88;
-  float tmp113 = tmp67 * tmp95;
-  float tmp114 = tmp112 + tmp113;
-  float tmp115 = tmp51 * tmp104;
-  float tmp116 = tmp114 + tmp115;
-  float tmp117 = tmp1 * tmp116;
-  float tmp118 = tmp12 * tmp116;
-  float tmp119 = tmp16 * tmp116;
-  float tmp120 = tmp20 * tmp116;
-  float tmp121 = tmp24 * tmp116;
+  float tmp24 = w[13];
+  float tmp25 = tmp23 * tmp24;
+  float tmp26 = tmp3 + tmp25;
+  float tmp27 = tmp1 * tmp6;
+  float tmp28 = tmp4 + tmp27;
+  float tmp29 = tmp20 * tmp10;
+  float tmp30 = tmp28 + tmp29;
+  float tmp31 = x5;
+  float tmp32 = tmp31 * tmp14;
+  float tmp33 = tmp30 + tmp32;
+  float tmp34 = x6;
+  float tmp35 = tmp34 * tmp17;
+  float tmp36 = tmp33 + tmp35;
+  float tmp37 = x7;
+  float tmp38 = tmp37 * tmp21;
+  float tmp39 = tmp36 + tmp38;
+  float tmp40 = w[16];
+  float tmp41 = tmp39 * tmp40;
+  float tmp42 = tmp26 + tmp41;
+  float tmp43 = w[11];
+  float tmp44 = w[5];
+  float tmp45 = tmp5 * tmp44;
+  float tmp46 = tmp43 + tmp45;
+  float tmp47 = w[6];
+  float tmp48 = tmp9 * tmp47;
+  float tmp49 = tmp46 + tmp48;
+  float tmp50 = w[7];
+  float tmp51 = tmp13 * tmp50;
+  float tmp52 = tmp49 + tmp51;
+  float tmp53 = w[8];
+  float tmp54 = tmp1 * tmp53;
+  float tmp55 = tmp52 + tmp54;
+  float tmp56 = w[9];
+  float tmp57 = tmp20 * tmp56;
+  float tmp58 = tmp55 + tmp57;
+  float tmp59 = w[18];
+  float tmp60 = tmp58 * tmp59;
+  float tmp61 = tmp42 + tmp60;
+  float tmp62 = tmp1 * tmp44;
+  float tmp63 = tmp43 + tmp62;
+  float tmp64 = tmp20 * tmp47;
+  float tmp65 = tmp63 + tmp64;
+  float tmp66 = tmp31 * tmp50;
+  float tmp67 = tmp65 + tmp66;
+  float tmp68 = tmp34 * tmp53;
+  float tmp69 = tmp67 + tmp68;
+  float tmp70 = tmp37 * tmp56;
+  float tmp71 = tmp69 + tmp70;
+  float tmp72 = w[21];
+  float tmp73 = tmp71 * tmp72;
+  float tmp74 = tmp61 + tmp73;
+  float tmp75 = tmp2 + tmp74;
+  float tmp76 = tmp75 * tmp75;
+  float tmp77 = -1.0f;
+  float tmp78 = tmp77 * tmp20;
+  float tmp79 = w[12];
+  float tmp80 = tmp23 * tmp79;
+  float tmp81 = tmp3 + tmp80;
+  float tmp82 = w[15];
+  float tmp83 = tmp39 * tmp82;
+  float tmp84 = tmp81 + tmp83;
+  float tmp85 = w[17];
+  float tmp86 = tmp58 * tmp85;
+  float tmp87 = tmp84 + tmp86;
+  float tmp88 = w[20];
+  float tmp89 = tmp71 * tmp88;
+  float tmp90 = tmp87 + tmp89;
+  float tmp91 = tmp78 + tmp90;
+  float tmp92 = tmp91 * tmp91;
+  float tmp93 = tmp76 + tmp92;
+  float tmp94 = -1.0f;
+  float tmp95 = tmp94 * tmp31;
+  float tmp96 = w[14];
+  float tmp97 = tmp39 * tmp96;
+  float tmp98 = tmp3 + tmp97;
+  float tmp99 = w[19];
+  float tmp100 = tmp71 * tmp99;
+  float tmp101 = tmp98 + tmp100;
+  float tmp102 = tmp95 + tmp101;
+  float tmp103 = tmp102 * tmp102;
+  float tmp104 = tmp93 + tmp103;
+  float tmp105 = 2.0f;
+  float tmp106 = tmp3 + tmp97;
+  float tmp107 = tmp106 + tmp100;
+  float tmp108 = tmp95 + tmp107;
+  float tmp109 = tmp105 * tmp108;
+  float tmp110 = tmp96 * tmp109;
+  float tmp111 = 2.0f;
+  float tmp112 = tmp81 + tmp83;
+  float tmp113 = tmp112 + tmp86;
+  float tmp114 = tmp113 + tmp89;
+  float tmp115 = tmp78 + tmp114;
+  float tmp116 = tmp111 * tmp115;
+  float tmp117 = tmp82 * tmp116;
+  float tmp118 = tmp110 + tmp117;
+  float tmp119 = 2.0f;
+  float tmp120 = tmp3 + tmp25;
+  float tmp121 = tmp120 + tmp41;
+  float tmp122 = tmp121 + tmp60;
+  float tmp123 = tmp122 + tmp73;
+  float tmp124 = tmp2 + tmp123;
+  float tmp125 = tmp119 * tmp124;
+  float tmp126 = tmp40 * tmp125;
+  float tmp127 = tmp118 + tmp126;
+  float tmp128 = tmp1 * tmp127;
+  float tmp129 = tmp79 * tmp116;
+  float tmp130 = tmp24 * tmp125;
+  float tmp131 = tmp129 + tmp130;
+  float tmp132 = tmp5 * tmp131;
+  float tmp133 = tmp128 + tmp132;
+  float tmp134 = tmp20 * tmp127;
+  float tmp135 = tmp9 * tmp131;
+  float tmp136 = tmp134 + tmp135;
+  float tmp137 = tmp31 * tmp127;
+  float tmp138 = tmp13 * tmp131;
+  float tmp139 = tmp137 + tmp138;
+  float tmp140 = tmp34 * tmp127;
+  float tmp141 = tmp1 * tmp131;
+  float tmp142 = tmp140 + tmp141;
+  float tmp143 = tmp37 * tmp127;
+  float tmp144 = tmp20 * tmp131;
+  float tmp145 = tmp143 + tmp144;
+  float tmp146 = tmp99 * tmp109;
+  float tmp147 = tmp88 * tmp116;
+  float tmp148 = tmp146 + tmp147;
+  float tmp149 = tmp72 * tmp125;
+  float tmp150 = tmp148 + tmp149;
+  float tmp151 = tmp1 * tmp150;
+  float tmp152 = tmp85 * tmp116;
+  float tmp153 = tmp59 * tmp125;
+  float tmp154 = tmp152 + tmp153;
+  float tmp155 = tmp5 * tmp154;
+  float tmp156 = tmp151 + tmp155;
+  float tmp157 = tmp20 * tmp150;
+  float tmp158 = tmp9 * tmp154;
+  float tmp159 = tmp157 + tmp158;
+  float tmp160 = tmp31 * tmp150;
+  float tmp161 = tmp13 * tmp154;
+  float tmp162 = tmp160 + tmp161;
+  float tmp163 = tmp34 * tmp150;
+  float tmp164 = tmp1 * tmp154;
+  float tmp165 = tmp163 + tmp164;
+  float tmp166 = tmp37 * tmp150;
+  float tmp167 = tmp20 * tmp154;
+  float tmp168 = tmp166 + tmp167;
+  float tmp169 = tmp127 + tmp131;
+  float tmp170 = tmp150 + tmp154;
 
-  ls = tmp83;
-  d2 = tmp27;
-  d3 = tmp50;
-  z0 = tmp53;
-  z1 = tmp69;
-  z2 = tmp80;
-  wd[0] += tmp107;
-  wd[1] += tmp108;
-  wd[2] += tmp109;
-  wd[3] += tmp110;
-  wd[4] += tmp111;
-  wd[5] += tmp117;
-  wd[6] += tmp118;
-  wd[7] += tmp119;
-  wd[8] += tmp120;
-  wd[9] += tmp121;
-  wd[10] += tmp106;
-  wd[11] += tmp116;
-  wd[12] += tmp58;
-  wd[13] += tmp5;
-  wd[14] += tmp75;
-  wd[15] += tmp61;
-  wd[16] += tmp28;
-  wd[17] += tmp64;
-  wd[18] += tmp32;
-  wd[19] += tmp78;
-  wd[20] += tmp67;
-  wd[21] += tmp51;
+  ls = tmp104;
+  y3 = tmp74;
+  y4 = tmp90;
+  y5 = tmp101;
+  wd[0] += tmp133;
+  wd[1] += tmp136;
+  wd[2] += tmp139;
+  wd[3] += tmp142;
+  wd[4] += tmp145;
+  wd[5] += tmp156;
+  wd[6] += tmp159;
+  wd[7] += tmp162;
+  wd[8] += tmp165;
+  wd[9] += tmp168;
+  wd[10] += tmp169;
+  wd[11] += tmp170;
+  wd[12] += tmp79;
+  wd[13] += tmp24;
+  wd[14] += tmp96;
+  wd[15] += tmp82;
+  wd[16] += tmp40;
+  wd[17] += tmp85;
+  wd[18] += tmp59;
+  wd[19] += tmp99;
+  wd[20] += tmp88;
+  wd[21] += tmp72;
   wd[22] += tmp3;
 }
 
@@ -336,24 +383,25 @@ int data[] = {
     -65, -61, -61, -61, -61, -62, -63, -63, -63};
 
 void print_input_output() {
-  printf("input\toutput");
+  printf("input\toutput\n");
   int len = sizeof(data) / sizeof(data[0]);
   for (int s = 0; s + 2 < len; s += 3) {
     x0 = x3;
     x1 = x4;
-    x2 = data[s] * 0.01f;
-    x3 = data[s + 1] * 0.01f;
-    x4 = data[s + 2] * 0.01f;
-    d0 = d2;
-    d1 = d3;
+    x2 = x5;
+    x3 = x6;
+    x4 = x7;
+    x5 = data[s] * 0.01f;
+    x6 = data[s + 1] * 0.01f;
+    x7 = data[s + 2] * 0.01f;
 
     step();
-    if (s == 0)
+    if (s <= 2)
       continue;
 
-    printf("%.2f\t%0.2f\n", x0, z0);
-    printf("%.2f\t%0.2f\n", x1, z1);
-    printf("%.2f\t%0.2f\n", x2, z2);
+    printf("%.2f\t%0.2f\n", x3, y3);
+    printf("%.2f\t%0.2f\n", x4, y4);
+    printf("%.2f\t%0.2f\n", x5, y5);
   }
 }
 
@@ -365,19 +413,20 @@ void train() {
 
   int len = sizeof(data) / sizeof(data[0]);
   printf("data len: %d\n", len);
-  for (int n = 0; n < 100000; n += 1) {
+  for (int n = 0; n < 1000000; n += 1) {
     float err = 0.0f;
     for (int s = 0; s + 2 < len; s += 3) {
       x0 = x3;
       x1 = x4;
-      x2 = data[s] * 0.01f;
-      x3 = data[s + 1] * 0.01f;
-      x4 = data[s + 2] * 0.01f;
-      d0 = d2;
-      d1 = d3;
+      x2 = x5;
+      x3 = x6;
+      x4 = x7;
+      x5 = data[s] * 0.1f;
+      x6 = data[s + 1] * 0.1f;
+      x7 = data[s + 2] * 0.1f;
 
       step();
-      if (s == 0)
+      if (s <= 0)
         continue;
       err += ls;
     }
@@ -385,7 +434,8 @@ void train() {
     float wd_sum = 0.0f;
     for (int i = 0; i < 23; i++) {
       wd_sum += fabs(wd[i]);
-      w[i] -= 0.000000001f * wd[i];
+      w[i] -= 0.00000001f * wd[i];
+      // w[i] += ((rand() % 2001) - 1000) * 0.0000001;
     }
 
     if (wd_sum > 1000.0f) {

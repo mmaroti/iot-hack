@@ -19,6 +19,7 @@ class Node(object):
         if self.mark is None:
             for sub in self.subs:
                 sub.topsort(list)
+            assert self.mark is None
             self.mark = True
             list.append(self)
 
@@ -183,6 +184,7 @@ class NodeSquare(Node):
     def __init__(self, arg0):
         self.mark = None
         self.subs = [arg0]
+        self.value = 0.0
 
     def __str__(self):
         return "square {}".format(self.subs[0].mark)
@@ -245,6 +247,7 @@ def backprop(out):
     for node in nodes:
         node.mark = NodeConst(0)
     out.mark = NodeConst(1)
+    assert nodes[-1] == out
     for idx in range(len(nodes) - 1, -1, -1):
         nodes[idx].backprop()
 
@@ -270,7 +273,7 @@ def dotprod_bias(left, right, bias):
 
 def sum_square_diff(left, right):
     assert len(left) == len(right)
-    node = NodeConst(0)
+    node = NodeConst(0.0)
     for idx in range(len(left)):
         s = NodeSum(NodeProd(NodeConst(-1), left[idx]), right[idx])
         node = NodeSum(node, NodeSquare(s))
@@ -309,11 +312,14 @@ def simple_autoenc():
     # old inputs
     x0 = NodeInput("x0")
     x1 = NodeInput("x1")
-
-    # new inputs
     x2 = NodeInput("x2")
     x3 = NodeInput("x3")
     x4 = NodeInput("x4")
+
+    # new inputs
+    x5 = NodeInput("x5")
+    x6 = NodeInput("x6")
+    x7 = NodeInput("x7")
 
     # compression weights
     w0 = NodeInput("w[0]")
@@ -329,13 +335,11 @@ def simple_autoenc():
     wa = NodeInput("w[10]")
     wb = NodeInput("w[11]")
 
-    # old compressed data
-    d0 = NodeInput("d0")
-    d1 = NodeInput("d1")
-
-    # new compressed data
-    d2 = dotprod_bias([x0, x1, x2, x3, x4], [w0, w1, w2, w3, w4], wa)
-    d3 = dotprod_bias([x0, x1, x2, x3, x4], [w5, w6, w7, w8, w9], wb)
+    # compressed data
+    d0 = dotprod_bias([x0, x1, x2, x3, x4], [w0, w1, w2, w3, w4], wa)
+    d1 = dotprod_bias([x0, x1, x2, x3, x4], [w5, w6, w7, w8, w9], wb)
+    d2 = dotprod_bias([x3, x4, x5, x6, x7], [w0, w1, w2, w3, w4], wa)
+    d3 = dotprod_bias([x3, x4, x5, x6, x7], [w5, w6, w7, w8, w9], wb)
 
     # calculate the relu
     # d2 = NodeRelu(d2, d2)
@@ -358,32 +362,30 @@ def simple_autoenc():
     z = NodeConst(0.0)
 
     # output data
-    y0 = dotprod_bias([z, d0, z, z, d2, z, d1, z, z, d3],
+    y3 = dotprod_bias([z, d0, z, z, d2, z, d1, z, z, d3],
                       [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9], va)
-    y1 = dotprod_bias([d0, z, z, d2, z, d1, z, z, d3, z],
+    y4 = dotprod_bias([d0, z, z, d2, z, d1, z, z, d3, z],
                       [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9], va)
-    y2 = dotprod_bias([z, z, d2, z, z, z, z, d3, z, z],
+    y5 = dotprod_bias([z, z, d2, z, z, z, z, d3, z, z],
                       [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9], va)
 
     # calculate the loss
-    ls = sum_square_diff([x0, x1, x2], [y0, y1, y2])
+    ls = sum_square_diff([x3, x4, x5], [y3, y4, y5])
 
     backprop(ls)
     wd = get_derivs([w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, wa, wb])
     vd = get_derivs([v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, va])
 
-    zs = const_prop([ls, d2, d3, y0, y1, y2] + wd + vd)
-    print_c(zs)
+    zs = const_prop([ls, y3, y4, y5] + wd + vd)
 
+    print_c(zs)
     print("ls = {};".format(zs[0].mark))
-    print("d2 = {};".format(zs[1].mark))
-    print("d3 = {};".format(zs[2].mark))
-    print("y0 = {};".format(zs[3].mark))
-    print("y1 = {};".format(zs[4].mark))
-    print("y2 = {};".format(zs[5].mark))
+    print("y3 = {};".format(zs[1].mark))
+    print("y4 = {};".format(zs[2].mark))
+    print("y5 = {};".format(zs[3].mark))
 
     for idx in range(23):
-        print("wd[{}] += {};".format(idx, zs[6 + idx].mark))
+        print("wd[{}] += {};".format(idx, zs[4 + idx].mark))
 
 
 def dump_training_data(filename=""):

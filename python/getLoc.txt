@@ -1,9 +1,0 @@
-from geopy.geocoders import Nominatim
-geolocator = Nominatim()
-location = geolocator.reverse("46.249937, 20.146077")
-
-print(location.address)
-
-
-
-SZTE, 13, Dugonics tér, Belváros, Szeged, Szegedi járás, Csongrád megye, Dél-Alföld, Alföld és Észak, 6720, Magyarország
