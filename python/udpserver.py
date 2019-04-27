@@ -52,7 +52,7 @@ def run(args=None):
                 if data.startswith("gps"):
                     # location = geolocator.reverse("46.249937, 20.146077")
                     # print(location.address)
-                    print("SZTE, 13, Dugonics tér, Belváros, Szeged, Szegedi járás, Csongrád megye, Dél-Alföld, Alföld és Észak, 6720, Magyarország")
+                    print("SZTE, 13, Dugonics ter, Belvaros, Szeged, Szegedi jaras, Csongrad megye, Del-Alfold, Alfold es Eszak, 6720, Magyarorszag")
                 server.send("Hello", addr)
 
 
