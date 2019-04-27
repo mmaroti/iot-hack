@@ -5,7 +5,7 @@ from __future__ import print_function
 import socket
 import logging
 import time
-from geopy.geocoders import Nominatim
+import geopy.geocoders
 
 
 class Server(object):
@@ -41,7 +41,7 @@ class Server(object):
 
 def run(args=None):
     logging.basicConfig(level=logging.INFO)
-    geolocator = Nominatim()
+    geolocator = geopy.geocoders.GoogleV3()
 
     with Server() as server:
         while True:
