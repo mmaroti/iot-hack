@@ -5,6 +5,7 @@ from __future__ import print_function
 import socket
 import logging
 import time
+import geopy.geocoders
 
 
 class Server(object):
@@ -40,6 +41,7 @@ class Server(object):
 
 def run(args=None):
     logging.basicConfig(level=logging.INFO)
+    geolocator = geopy.geocoders.GoogleV3()
 
     with Server() as server:
         while True:
@@ -47,6 +49,9 @@ def run(args=None):
             if data is not None:
                 logging.info("Received %s from %s",
                              data.replace("\n", "<cr>"), addr)
+                if data.startswith("gps"):
+                    location = geolocator.reverse("46.249937, 20.146077")
+                    print(location.address)
                 server.send("Hello", addr)
 
 
