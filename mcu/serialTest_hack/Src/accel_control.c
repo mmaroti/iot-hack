@@ -9,6 +9,7 @@
 #include "ADXL345.h"
 #include "accel_control.h"
 #include "console_handler.h"
+#include "timestamp.h"
 
 uint8_t accel_ready;
 
@@ -36,12 +37,19 @@ void handle_accel() {
 		}
 
 		if (accel_pos >= ACCEL_LEN) {
-			//write_console("accel:");
-			//for (int n = 0; n < accel_pos; n++) {
-			//	write_console(" ");
-			//	write_console_int(accel[n]);
-			//}
-			//write_console("\n");
+			write_console("accel:");
+			write_console("\n");
+
+			write_console("time:");
+			write_console(" ");
+			write_timestamp_console();
+			write_console("\n");
+
+			for (int n = 0; n < accel_pos; n++) {
+				write_console(" ");
+				write_console_int(accel[n]);
+			}
+			write_console("\n");
 			if(detect_accident(accel)) {
 				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
 			}
@@ -110,8 +118,7 @@ uint8_t detect_accident(int16_t *data) {
 
 		if(abs(dx)>DETECTOR_THRESHOLD || abs(dy)>DETECTOR_THRESHOLD || abs(dz)>DETECTOR_THRESHOLD) {
 			return 1u;
-		} else {
-			return 0u;
 		}
 	}
+	return 0u;
 }
