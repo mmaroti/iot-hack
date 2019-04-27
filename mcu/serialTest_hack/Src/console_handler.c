@@ -11,14 +11,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-int is_console_rx_ready() {
-	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) ? SET : RESET) == SET;
-}
-
-int is_console_tx_ready() {
-	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TXE) ? SET : RESET) == SET;
-}
-
 enum {
 	CONSOLE_LEN = 128, // input command buffer
 	REPORT_LEN = 1024, // output report buffer
@@ -31,11 +23,20 @@ char report[REPORT_LEN];
 int report_pos = 0;
 int report_len = 0;
 
+int is_console_rx_ready() {
+	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) ? SET : RESET) == SET;
+}
+
+int is_console_tx_ready() {
+	return (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TXE) ? SET : RESET) == SET;
+}
+
 void handle_console() {
 	if (!booted) {
 		booted = 1;
 		write_console("booted\n");
 	}
+
 	if (is_console_rx_ready()) {
 		uint8_t data;
 		if (HAL_UART_Receive(&huart2, &data, 1, 1) == HAL_OK) {
@@ -51,6 +52,7 @@ void handle_console() {
 				console_pos = 0;
 		}
 	}
+
 	if (report_len > 0 && is_console_tx_ready()) {
 		HAL_UART_Transmit(&huart2, (uint8_t*) report + report_pos, 1, 1);
 		report_pos += 1;
@@ -83,8 +85,13 @@ void process_command(const char *text) {
 		write_console("at cmd: ");
 		write_console(text);
 		write_console("\n");
-		send_radio(text);
-		send_radio("\r");
+		write_radio_raw(text);
+		write_radio_raw("\r");
+	} else if (strncmp(text, "send ", 5) == 0) {
+		write_console("sending: ");
+		write_console(text + 5);
+		write_console("\n");
+		send_radio_packet(text + 5);
 	} else {
 		write_console("unknown: ");
 		write_console(text);
