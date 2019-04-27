@@ -1,0 +1,5 @@
+from geopy.geocoders import Nominatim
+geolocator = Nominatim()
+location = geolocator.reverse("46.249937, 20.146077")
+
+print(location.address)

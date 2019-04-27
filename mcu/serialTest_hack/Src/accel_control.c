@@ -10,6 +10,7 @@
 #include "accel_control.h"
 #include "console_handler.h"
 #include "timestamp.h"
+#include "radio_handler.h"
 
 uint8_t accel_ready;
 
@@ -37,21 +38,23 @@ void handle_accel() {
 		}
 
 		if (accel_pos >= ACCEL_LEN) {
-			write_console("accel:");
-			write_console("\n");
+			//write_console("accel:");
+			//write_console("\n");
 
-			write_console("time:");
-			write_console(" ");
-			write_timestamp_console();
-			write_console("\n");
+			//write_console("time:");
+			//write_console(" ");
+			//write_timestamp_console();
+			//write_console("\n");
 
-			for (int n = 0; n < accel_pos; n++) {
-				write_console(" ");
-				write_console_int(accel[n]);
-			}
-			write_console("\n");
+			//for (int n = 0; n < accel_pos; n++) {
+			//	write_console(" ");
+			//	write_console_int(accel[n]);
+			//}
+			//write_console("\n");
 			if(detect_accident(accel)) {
+				accel_stop();
 				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
+				send_radio_packet("46A14598N20A08459E");
 			}
 			accel_pos = 0;
 		}

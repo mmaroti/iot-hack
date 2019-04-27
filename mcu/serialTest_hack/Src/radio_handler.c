@@ -10,6 +10,7 @@
 #include "usart.h"
 #include <string.h>
 #include <stdlib.h>
+#include "accel_control.h"
 
 enum {
 	RADIO_LEN = 128, // radio to mcu buffer
@@ -62,7 +63,7 @@ void send_config(const char *cmd) {
 }
 
 void process_report() {
-	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	//HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
 	write_console("radio: ");
 	write_console(radio);
@@ -81,6 +82,8 @@ void process_report() {
 		} else if (config_step == CONFIG_OPEN_SENT) {
 			write_console("config: done\n");
 			config_step = CONFIG_DONE;
+			//workaround
+			accel_start();
 		}
 	}
 
