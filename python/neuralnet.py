@@ -5,153 +5,125 @@ from __future__ import print_function
 
 
 class Node(object):
+    def __init__(self):
+        self.mark = None
+        self.subs = []
+
+    def remark(self, value):
+        self.mark = value
+        for sub in self.subs:
+            sub.remark(value)
+
+    def topsort(self, list):
+        if self.mark is None:
+            for sub in self.subs:
+                sub.topsort(list)
+            self.mark = True
+            list.append(self)
+
     def __str__(self):
         pass
 
-    def mark(self, markers):
+    def const_prop(self):
         pass
-
-    def copy(self, nodes):
-        pass
-
-    def const_prop(self, prog, nodes):
-        return prog.add(self.copy(nodes))
 
 
 class NodeConst(Node):
     def __init__(self, value):
+        self.mark = None
+        self.subs = []
         self.value = value
 
     def __str__(self):
         return "const {}".format(self.value)
 
-    def copy(self, nodes):
-        return NodeConst(self.value)
+    def const_prop(self):
+        self.mark = NodeConst(self.value)
 
 
 class NodeInput(Node):
     def __init__(self, name):
-        self.name = name is not None
+        self.mark = None
+        self.subs = []
+        self.name = name
 
     def __str__(self):
         return "input {}".format(self.name)
 
-    def copy(self, nodes):
-        return NodeInput(self.name)
+    def const_prop(self):
+        self.mark = NodeInput(self.name)
 
 
 class NodeSum(Node):
-    def __init__(self, arg1, arg2):
-        assert arg1 is not None and arg2 is not None
-        self.arg1 = arg1
-        self.arg2 = arg2
+    def __init__(self, arg0, arg1):
+        self.mark = None
+        self.subs = [arg0, arg1]
 
     def __str__(self):
-        return "sum {} {}".format(self.arg1, self.arg2)
+        return "sum {} {}".format(self.subs[0].mark, self.subs[1].mark)
 
-    def mark(self, markers):
-        markers[self.arg1] = True
-        markers[self.arg    assert arg1 is not None and arg2 is not None
-    self.arg1 = arg1
-    self.arg2 = arg2
-2] = True
-
-    def copy(self, nodes):
-        return NodeSum(nodes[self.arg1], nodes[self.arg2])
-
-    def const_prop(self, prog, nodes):
-        n1 = prog.nodes[nodes[self.arg1]]
-        n2 = prog.nodes[nodes[self.arg2]]
-        print(n1, n2)
-        c1 = isinstance(n1, NodeConst)
-        c2 = isinstance(n2, NodeConst)
-        print(c1, c2)
-        if c1 and c2:
-            return NodeConst(n1.value + n2.value)
-        elif c1 and n1.value == 0:
-            return n2
-        elif c2 and n2.value == 0:
-            return n1
+    def const_prop(self):
+        sub0 = self.subs[0].mark
+        sub1 = self.subs[1].mark
+        if isinstance(sub0, NodeConst) and isinstance(sub1, NodeConst):
+            self.mark = NodeConst(sub0.value + sub1.value)
+        elif isinstance(sub0, NodeConst) and sub0.value == 0:
+            self.mark = sub1
+        elif isinstance(sub1, NodeConst) and sub1.value == 0:
+            self.mark = sub0
         else:
-            return prog.add(self.copy(nodes))
+            self.mark = NodeSum(sub0, sub1)
 
 
 class NodeProd(Node):
-    def __init__(self, arg1, arg2):
-        assert arg1 is not None and arg2 is not None
-        self.arg1 = arg1
-        self.arg2 = arg2
+    def __init__(self, arg0, arg1):
+        self.mark = None
+        self.subs = [arg0, arg1]
 
     def __str__(self):
-        return "prod {} {}".format(self.arg1, self.arg2)
-
-    def mark(self, markers):
-        markers[self.arg1] = True
-        markers[self.arg2] = True
-
-    def copy(self, nodes):
-        return NodeProd(nodes[self.arg1], nodes[self.arg2])
+        return "prod {} {}".format(self.subs[0].mark, self.subs[1].mark)
 
 
 class NodeRelu(Node):
     def __init__(self, arg):
-        assert arg is not None
-        self.arg = arg
+        self.mark = None
+        self.subs = [arg]
 
     def __str__(self):
-        return "relu {}".format(self.arg)
-
-    def mark(self, markers):
-        markers[self.arg] = True
-
-    def copy(self, nodes):
-        return NodeRelu(nodes[self.arg])
+        return "relu {}".format(self.subs[0].mark)
 
 
-class Program(object):
-    def __init__(self):
-        self.nodes = []
+def topsort_nodes(nodes):
+    for node in nodes:
+        node.remark(None)
+    nodes2 = []
+    for node in nodes:
+        node.topsort(nodes2)
+    return nodes2
 
-    def add(self, node):
-        assert isinstance(node, Node)
-        self.nodes.append(node)
-        return len(self.nodes) - 1
 
-    def __str__(self):
-        result = ""
-        for index, node in enumerate(self.nodes):
-            result += "{}: {}\n".format(index, node)
-        return result
+def print_nodes(nodes):
+    nodes = topsort_nodes(nodes)
+    for idx, node in enumerate(nodes):
+        node.mark = idx
+        print("{}: {}".format(idx, node))
+    print()
 
-    def dead_code_elim(self, outputs):
-        markers = [False] * len(self.nodes)
-        for index in outputs:
-            markers[index] = True
-        for index in range(len(markers)-1, -1, -1):
-            if markers[index]:
-                self.nodes[index].mark(markers)
 
-        prog = Program()
-        nodes = [None] * len(markers)
-        for index in range(0, len(markers)):
-            if markers[index]:
-                nodes[index] = prog.add(self.nodes[index].copy(nodes))
-        return prog
-
-    def const_prop(self):
-        prog = Program()
-        nodes = [None] * len(self.nodes)
-        for idx in range(0, len(nodes)):
-            nodes[idx] = self.nodes[idx].const_prop(prog, nodes)
-        return prog
+def const_prop(nodes):
+    nodes2 = topsort_nodes(nodes)
+    for node in nodes2:
+        node.const_prop()
+    return [node.mark for node in nodes]
 
 
 if __name__ == "__main__":
-    prog = Program()
-    v1 = prog.add(NodeInput("v1"))
-    v2 = prog.add(NodeConst(1.0))
-    v3 = prog.add(NodeConst(0.0))
-    v4 = prog.add(NodeSum(v1, v3))
-    print(prog)
-    print(prog.dead_code_elim([v4]))
-    print(prog.const_prop())
+    nodes = []
+    nodes.append(NodeInput("v1"))
+    nodes.append(NodeConst(1.0))
+    nodes.append(NodeConst(0.0))
+    nodes.append(NodeSum(nodes[0], nodes[2]))
+    nodes.append(NodeSum(nodes[1], nodes[2]))
+    print_nodes(nodes)
+    nodes2 = const_prop(nodes[3:])
+    print_nodes(nodes2)
